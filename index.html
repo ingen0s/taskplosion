@@ -3,67 +3,100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Taskplosion: Obliterate Your Tasks!</title>
+  <title>Taskplosion: Annihilation Zone</title>
   <style>
-    body {
+    * {
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #1a1a1a, #ff0066);
-      font-family: 'Impact', sans-serif;
-      color: #fff;
+      box-sizing: border-box;
+    }
+    body {
+      background: #000;
+      font-family: 'Courier New', monospace;
+      color: #0f0;
       overflow: hidden;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
+    }
+    .glitch-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        45deg,
+        #ff00ff 0%,
+        #00ffff 10%,
+        #ff00ff 20%
+      );
+      opacity: 0.2;
+      animation: glitch-shift 0.5s infinite steps(5);
+      z-index: -1;
     }
     .container {
       text-align: center;
+      padding: 20px;
+      max-width: 90vw;
       z-index: 10;
     }
     h1 {
-      font-size: 4rem;
+      font-size: clamp(2.5rem, 8vw, 5rem);
       text-transform: uppercase;
-      text-shadow: 0 0 10px #ff0066, 0 0 20px #ffcc00, 0 0 30px #ff0066;
-      animation: glow 2s infinite alternate;
+      color: #ff0;
+      text-shadow: 
+        0 0 5px #f0f,
+        0 0 10px #0ff,
+        0 0 20px #f00;
+      animation: glitch-text 0.3s infinite alternate, flicker 1s infinite;
+      letter-spacing: 2px;
     }
     p {
-      font-size: 1.5rem;
-      color: #ffcc00;
-      text-shadow: 0 0 5px #000;
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      color: #0ff;
+      text-shadow: 0 0 5px #f00;
+      margin: 10px 0;
     }
     #task {
+      width: 100%;
+      max-width: 400px;
       padding: 15px;
-      font-size: 1.2rem;
-      width: 300px;
-      border: 3px solid #ff0066;
-      border-radius: 10px;
-      background: rgba(0, 0, 0, 0.8);
-      color: #fff;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      background: rgba(0, 255, 0, 0.1);
+      border: 2px dashed #f0f;
+      border-radius: 5px;
+      color: #0f0;
       outline: none;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 10px #0f0;
     }
     #task:focus {
-      border-color: #ffcc00;
-      box-shadow: 0 0 15px #ffcc00;
+      border-color: #ff0;
+      box-shadow: 0 0 20px #ff0;
+      background: rgba(255, 255, 0, 0.2);
     }
     button {
+      margin-top: 20px;
       padding: 15px 30px;
-      font-size: 1.5rem;
-      background: #ff0066;
+      font-size: clamp(1.2rem, 3vw, 1.5rem);
+      background: #f00;
       color: #fff;
-      border: none;
-      border-radius: 10px;
+      border: 3px solid #ff0;
+      border-radius: 0;
       cursor: pointer;
       text-transform: uppercase;
-      box-shadow: 0 0 10px #ff0066;
-      transition: all 0.3s ease;
+      box-shadow: 0 0 15px #f00;
+      transition: all 0.2s ease;
+      animation: pulse 1s infinite;
     }
-    button:hover {
-      background: #ffcc00;
+    button:hover, button:active {
+      background: #ff0;
       color: #000;
-      box-shadow: 0 0 20px #ffcc00;
-      transform: scale(1.1);
+      box-shadow: 0 0 30px #ff0;
+      transform: scale(1.05);
     }
     #explosion {
       position: fixed;
@@ -71,31 +104,79 @@
       left: 0;
       width: 100%;
       height: 100%;
-      pointer-events: none;
+      background: radial-gradient(circle, #ff0 0%, #f00 50%, transparent 70%);
       opacity: 0;
+      pointer-events: none;
       z-index: 5;
     }
     .explosion-active {
       opacity: 1;
-      animation: explode 1s ease-out forwards;
+      animation: mega-blast 1.5s ease-out forwards;
     }
-    @keyframes explode {
-      0% { background: rgba(255, 0, 102, 0); transform: scale(0); }
-      50% { background: rgba(255, 204, 0, 0.8); transform: scale(1.5); }
-      100% { background: rgba(255, 0, 102, 0); transform: scale(2); }
+    .warning {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      color: #f00;
+      text-shadow: 0 0 5px #ff0;
+      animation: blink 0.5s infinite;
     }
-    @keyframes glow {
-      from { text-shadow: 0 0 10px #ff0066, 0 0 20px #ffcc00; }
-      to { text-shadow: 0 0 20px #ff0066, 0 0 40px #ffcc00; }
+
+    /* Animations */
+    @keyframes glitch-shift {
+      0% { transform: translate(0, 0); }
+      20% { transform: translate(-5px, 5px); }
+      40% { transform: translate(5px, -5px); }
+      60% { transform: translate(-5px, 0); }
+      80% { transform: translate(5px, 5px); }
+      100% { transform: translate(0, 0); }
+    }
+    @keyframes glitch-text {
+      0% { clip-path: inset(0 0 10% 0); }
+      50% { clip-path: inset(10% 0 0 0); }
+      100% { clip-path: inset(0 10% 0 0); }
+    }
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+    @keyframes mega-blast {
+      0% { transform: scale(0); opacity: 0; filter: blur(0); }
+      20% { transform: scale(1.2); opacity: 1; filter: blur(5px); }
+      50% { transform: scale(1.8); opacity: 0.9; filter: blur(10px); }
+      80% { transform: scale(2.5); opacity: 0.6; filter: blur(15px); }
+      100% { transform: scale(3); opacity: 0; filter: blur(20px); }
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Mobile Adjustments */
+    @media (max-width: 600px) {
+      .container { padding: 10px; }
+      h1 { font-size: clamp(2rem, 10vw, 4rem); }
+      p { font-size: clamp(0.9rem, 3.5vw, 1.2rem); }
+      #task { padding: 10px; }
+      button { padding: 12px 20px; margin-top: 15px; }
     }
   </style>
 </head>
 <body>
+  <div class="glitch-bg"></div>
+  <div class="warning">WARNING: TASK ANNIHILATION IMMINENT</div>
   <div class="container">
     <h1>Taskplosion</h1>
-    <p>Unleash chaos on tasks you despise—just $1 to watch ‘em burn!</p>
-    <input type="text" id="task" placeholder="E.g., 'Do the dishes'">
-    <button onclick="explodeTask()">Obliterate It!</button>
+    <p>Drop a task. Pay a buck. Watch it DIE in a blaze of glory.</p>
+    <input type="text" id="task" placeholder="E.g., 'File taxes'">
+    <button onclick="explodeTask()">ANNIHILATE</button>
   </div>
   <div id="explosion"></div>
 
@@ -103,19 +184,23 @@
     async function explodeTask() {
       const task = document.getElementById('task').value;
       if (!task) {
-        alert('Gimme a task to destroy, you legend!');
+        alert('ENTER A TARGET, DESTROYER!');
         return;
       }
 
-      // Trigger the explosion effect
+      // Unleash the mega blast
       const explosion = document.getElementById('explosion');
       explosion.classList.add('explosion-active');
-      
-      // Optional: Add a sound effect (uncomment if you host an explosion sound)
-      // const boom = new Audio('path/to/explosion.mp3');
+
+      // Shake the screen
+      document.body.style.animation = 'shake 0.5s';
+      setTimeout(() => document.body.style.animation = '', 500);
+
+      // Epic sound (uncomment with your own explosion.mp3)
+      // const boom = new Audio('path/to/mega-explosion.mp3');
       // boom.play();
 
-      // Wait for the explosion to finish before proceeding
+      // After the chaos, proceed to payment
       setTimeout(async () => {
         try {
           const response = await fetch('/create-checkout', {
@@ -125,22 +210,36 @@
           });
           const data = await response.json();
           if (!response.ok) {
-            alert('Chaos misfired! ' + (data.error || 'Something broke'));
+            alert('ANNIHILATION FAILED: ' + (data.error || 'SYSTEM MALFUNCTION'));
             explosion.classList.remove('explosion-active');
             return;
           }
-          window.location.href = data.url; // Off to Stripe!
+          window.location.href = data.url; // To Stripe we go!
         } catch (error) {
-          alert('Explosion aborted: ' + error.message);
+          alert('DESTRUCTION HALTED: ' + error.message);
           explosion.classList.remove('explosion-active');
         }
-      }, 1000); // Sync with explosion animation duration
+      }, 1500); // Matches mega-blast duration
     }
 
-    // Reset explosion after it finishes
+    // Reset explosion
     document.getElementById('explosion').addEventListener('animationend', () => {
       explosion.classList.remove('explosion-active');
     });
+
+    // Screen shake animation
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = `
+      @keyframes shake {
+        0% { transform: translate(0, 0); }
+        20% { transform: translate(-10px, 10px); }
+        40% { transform: translate(10px, -10px); }
+        60% { transform: translate(-10px, 0); }
+        80% { transform: translate(10px, 10px); }
+        100% { transform: translate(0, 0); }
+      }
+    `;
+    document.head.appendChild(styleSheet);
   </script>
 </body>
 </html>
