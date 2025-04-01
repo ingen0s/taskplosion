@@ -1,43 +1,146 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Taskplosion: Explode Your Tasks!</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taskplosion: Obliterate Your Tasks!</title>
   <style>
-    body { text-align: center; font-family: Comic Sans MS, sans-serif; }
-    input, button { padding: 10px; margin: 5px; font-size: 16px; }
-    #result { margin-top: 20px; font-size: 24px; color: hotpink; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1a1a1a, #ff0066);
+      font-family: 'Impact', sans-serif;
+      color: #fff;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      text-align: center;
+      z-index: 10;
+    }
+    h1 {
+      font-size: 4rem;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px #ff0066, 0 0 20px #ffcc00, 0 0 30px #ff0066;
+      animation: glow 2s infinite alternate;
+    }
+    p {
+      font-size: 1.5rem;
+      color: #ffcc00;
+      text-shadow: 0 0 5px #000;
+    }
+    #task {
+      padding: 15px;
+      font-size: 1.2rem;
+      width: 300px;
+      border: 3px solid #ff0066;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    #task:focus {
+      border-color: #ffcc00;
+      box-shadow: 0 0 15px #ffcc00;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 1.5rem;
+      background: #ff0066;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px #ff0066;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background: #ffcc00;
+      color: #000;
+      box-shadow: 0 0 20px #ffcc00;
+      transform: scale(1.1);
+    }
+    #explosion {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 5;
+    }
+    .explosion-active {
+      opacity: 1;
+      animation: explode 1s ease-out forwards;
+    }
+    @keyframes explode {
+      0% { background: rgba(255, 0, 102, 0); transform: scale(0); }
+      50% { background: rgba(255, 204, 0, 0.8); transform: scale(1.5); }
+      100% { background: rgba(255, 0, 102, 0); transform: scale(2); }
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #ff0066, 0 0 20px #ffcc00; }
+      to { text-shadow: 0 0 20px #ff0066, 0 0 40px #ffcc00; }
+    }
   </style>
 </head>
 <body>
-  <h1>Taskplosion: Tip to Explode Your Tasks!</h1>
-  <p>Enter a task you hate, tip a buck, and watch it go BOOM!</p>
-  <input type="text" id="task" placeholder="E.g., 'Clean the fridge'">
-  <button onclick="explodeTask()">Explode It! (Tip $1)</button>
-  <div id="result"></div>
+  <div class="container">
+    <h1>Taskplosion</h1>
+    <p>Unleash chaos on tasks you despise—just $1 to watch ‘em burn!</p>
+    <input type="text" id="task" placeholder="E.g., 'Do the dishes'">
+    <button onclick="explodeTask()">Obliterate It!</button>
+  </div>
+  <div id="explosion"></div>
 
   <script>
     async function explodeTask() {
       const task = document.getElementById('task').value;
       if (!task) {
-        alert('Gimme a task, ya goof!');
+        alert('Gimme a task to destroy, you legend!');
         return;
       }
-      try {
-        const response = await fetch('/create-checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ task })
-        });
-        const data = await response.json();
-        if (!response.ok) {
-          alert('Oops! ' + (data.error || 'Something went wrong'));
-          return;
+
+      // Trigger the explosion effect
+      const explosion = document.getElementById('explosion');
+      explosion.classList.add('explosion-active');
+      
+      // Optional: Add a sound effect (uncomment if you host an explosion sound)
+      // const boom = new Audio('path/to/explosion.mp3');
+      // boom.play();
+
+      // Wait for the explosion to finish before proceeding
+      setTimeout(async () => {
+        try {
+          const response = await fetch('/create-checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task })
+          });
+          const data = await response.json();
+          if (!response.ok) {
+            alert('Chaos misfired! ' + (data.error || 'Something broke'));
+            explosion.classList.remove('explosion-active');
+            return;
+          }
+          window.location.href = data.url; // Off to Stripe!
+        } catch (error) {
+          alert('Explosion aborted: ' + error.message);
+          explosion.classList.remove('explosion-active');
         }
-        window.location.href = data.url; // Redirect to Stripe Checkout
-      } catch (error) {
-        alert('Explosion failed: ' + error.message);
-      }
+      }, 1000); // Sync with explosion animation duration
     }
+
+    // Reset explosion after it finishes
+    document.getElementById('explosion').addEventListener('animationend', () => {
+      explosion.classList.remove('explosion-active');
+    });
   </script>
 </body>
 </html>
