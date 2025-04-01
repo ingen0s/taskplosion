@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Taskplosion: Ignite Your Tasks</title>
+  <title>Taskplosion: Simplify Tasks, Crush Them Fast</title>
   <style>
     * {
       margin: 0;
@@ -141,9 +141,9 @@
 <body>
   <div class="container">
     <h1>Taskplosion</h1>
-    <p>Drop a task. Ignite it for $1. Witness the blast.</p>
-    <input type="text" id="task" placeholder="E.g., 'Call the boss'">
-    <button onclick="explodeTask()">Ignite</button>
+    <p>Overwhelmed? Drop a task, simplify it for just $1, and crush it with clear steps!</p>
+    <input type="text" id="task" placeholder="E.g., 'Plan a team meeting'">
+    <button onclick="explodeTask()">Simplify Now</button>
   </div>
   <div id="explosion"></div>
 
@@ -151,29 +151,29 @@
     async function explodeTask() {
       const task = document.getElementById('task').value;
       if (!task) {
-        alert('Enter a task to ignite!');
+        alert('Please enter a task to simplify!');
         return;
       }
 
-      // Trigger the explosion
+      // Trigger the explosion animation
       const explosion = document.getElementById('explosion');
       explosion.classList.add('explosion-active');
 
-      // Add sparks for extra spice
+      // Add sparks for visual appeal
       for (let i = 0; i < 15; i++) {
         const spark = document.createElement('div');
         spark.className = 'spark';
-        const x = (Math.random() - 0.5) * 300; // Random X scatter
-        const y = (Math.random() - 0.5) * 300; // Random Y scatter
+        const x = (Math.random() - 0.5) * 300;
+        const y = (Math.random() - 0.5) * 300;
         spark.style.setProperty('--x', `${x}px`);
         spark.style.setProperty('--y', `${y}px`);
         spark.style.left = '50%';
         spark.style.top = '50%';
         document.body.appendChild(spark);
-        setTimeout(() => spark.remove(), 1000); // Clean up sparks
+        setTimeout(() => spark.remove(), 1000);
       }
 
-      // Proceed to payment after the blast
+      // Handle the request after animation
       setTimeout(async () => {
         try {
           const response = await fetch('/create-checkout', {
@@ -183,19 +183,28 @@
           });
           const data = await response.json();
           if (!response.ok) {
-            alert('Ignition failed: ' + (data.error || 'Something fizzled'));
+            alert('Simplification failed: ' + (data.error || 'Something went wrong'));
             explosion.classList.remove('explosion-active');
             return;
           }
-          window.location.href = data.url; // To Stripe
+
+          // Handle secret test task (test-explosion-123)
+          if (data.simplifiedTask) {
+            const steps = data.simplifiedTask.steps.join('\n');
+            alert(`Your Simplified Task:\n${steps}`);
+            explosion.classList.remove('explosion-active');
+            document.getElementById('task').value = ''; // Clear input
+          } else {
+            window.location.href = data.url; // Redirect to Stripe
+          }
         } catch (error) {
-          alert('Blast aborted: ' + error.message);
+          alert('Oops! Something broke: ' + error.message);
           explosion.classList.remove('explosion-active');
         }
-      }, 1500); // Matches ignite-blast duration
+      }, 1500); // Matches animation duration
     }
 
-    // Reset explosion
+    // Reset explosion animation
     document.getElementById('explosion').addEventListener('animationend', () => {
       explosion.classList.remove('explosion-active');
     });
