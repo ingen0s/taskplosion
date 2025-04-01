@@ -22,13 +22,21 @@
         alert('Gimme a task, ya goof!');
         return;
       }
-      const response = await fetch('/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task })
-      });
-      const { url } = await response.json();
-      window.location.href = url; // Redirect to Stripe Checkout
+      try {
+        const response = await fetch('/create-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ task })
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          alert('Oops! ' + (data.error || 'Something went wrong'));
+          return;
+        }
+        window.location.href = data.url; // Redirect to Stripe Checkout
+      } catch (error) {
+        alert('Explosion failed: ' + error.message);
+      }
     }
   </script>
 </body>
