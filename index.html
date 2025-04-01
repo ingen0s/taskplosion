@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Taskplosion: Explode Your Tasks!</title>
+  <style>
+    body { text-align: center; font-family: Comic Sans MS, sans-serif; }
+    input, button { padding: 10px; margin: 5px; font-size: 16px; }
+    #result { margin-top: 20px; font-size: 24px; color: hotpink; }
+  </style>
+</head>
+<body>
+  <h1>Taskplosion: Tip to Explode Your Tasks!</h1>
+  <p>Enter a task you hate, tip a buck, and watch it go BOOM!</p>
+  <input type="text" id="task" placeholder="E.g., 'Clean the fridge'">
+  <button onclick="explodeTask()">Explode It! (Tip $1)</button>
+  <div id="result"></div>
+
+  <script>
+    async function explodeTask() {
+      const task = document.getElementById('task').value;
+      if (!task) {
+        alert('Gimme a task, ya goof!');
+        return;
+      }
+      const response = await fetch('/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ task })
+      });
+      const { url } = await response.json();
+      window.location.href = url; // Redirect to Stripe Checkout
+    }
+  </script>
+</body>
+</html>
