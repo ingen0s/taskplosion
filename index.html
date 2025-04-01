@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Taskplosion: Annihilation Zone</title>
+  <title>Taskplosion: Vaporize Your Tasks</title>
   <style>
     * {
       margin: 0;
@@ -11,31 +11,14 @@
       box-sizing: border-box;
     }
     body {
-      background: #000;
-      font-family: 'Courier New', monospace;
-      color: #0f0;
-      overflow: hidden;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      color: #fff;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      position: relative;
-    }
-    .glitch-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: repeating-linear-gradient(
-        45deg,
-        #ff00ff 0%,
-        #00ffff 10%,
-        #ff00ff 20%
-      );
-      opacity: 0.2;
-      animation: glitch-shift 0.5s infinite steps(5);
-      z-index: -1;
+      overflow: hidden;
     }
     .container {
       text-align: center;
@@ -44,59 +27,58 @@
       z-index: 10;
     }
     h1 {
-      font-size: clamp(2.5rem, 8vw, 5rem);
-      text-transform: uppercase;
-      color: #ff0;
-      text-shadow: 
-        0 0 5px #f0f,
-        0 0 10px #0ff,
-        0 0 20px #f00;
-      animation: glitch-text 0.3s infinite alternate, flicker 1s infinite;
-      letter-spacing: 2px;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 700;
+      letter-spacing: 1px;
+      background: linear-gradient(to right, #fff, #87ceeb);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 15px;
+      animation: fadeIn 1s ease-out;
     }
     p {
-      font-size: clamp(1rem, 3vw, 1.5rem);
-      color: #0ff;
-      text-shadow: 0 0 5px #f00;
-      margin: 10px 0;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 25px;
+      font-weight: 300;
     }
     #task {
       width: 100%;
-      max-width: 400px;
-      padding: 15px;
-      font-size: clamp(1rem, 2.5vw, 1.2rem);
-      background: rgba(0, 255, 0, 0.1);
-      border: 2px dashed #f0f;
-      border-radius: 5px;
-      color: #0f0;
+      max-width: 350px;
+      padding: 12px 15px;
+      font-size: clamp(1rem, 2vw, 1.1rem);
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      color: #fff;
       outline: none;
-      transition: all 0.2s ease;
-      box-shadow: 0 0 10px #0f0;
+      transition: all 0.3s ease;
     }
     #task:focus {
-      border-color: #ff0;
-      box-shadow: 0 0 20px #ff0;
-      background: rgba(255, 255, 0, 0.2);
+      border-color: #87ceeb;
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 10px rgba(135, 206, 235, 0.5);
     }
     button {
       margin-top: 20px;
-      padding: 15px 30px;
-      font-size: clamp(1.2rem, 3vw, 1.5rem);
-      background: #f00;
-      color: #fff;
-      border: 3px solid #ff0;
-      border-radius: 0;
+      padding: 12px 30px;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      background: #87ceeb;
+      color: #1e3c72;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
+      font-weight: 600;
       text-transform: uppercase;
-      box-shadow: 0 0 15px #f00;
-      transition: all 0.2s ease;
-      animation: pulse 1s infinite;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
     }
-    button:hover, button:active {
-      background: #ff0;
-      color: #000;
-      box-shadow: 0 0 30px #ff0;
-      transform: scale(1.05);
+    button:hover {
+      background: #fff;
+      color: #2a5298;
+      box-shadow: 0 5px 15px rgba(255, 255, 255, 0.4);
+      transform: translateY(-2px);
     }
     #explosion {
       position: fixed;
@@ -104,79 +86,44 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: radial-gradient(circle, #ff0 0%, #f00 50%, transparent 70%);
+      background: radial-gradient(circle, rgba(135, 206, 235, 0.8) 0%, transparent 70%);
       opacity: 0;
       pointer-events: none;
       z-index: 5;
     }
     .explosion-active {
       opacity: 1;
-      animation: mega-blast 1.5s ease-out forwards;
-    }
-    .warning {
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: clamp(0.8rem, 2vw, 1rem);
-      color: #f00;
-      text-shadow: 0 0 5px #ff0;
-      animation: blink 0.5s infinite;
+      animation: clean-blast 1.2s ease-out forwards;
     }
 
     /* Animations */
-    @keyframes glitch-shift {
-      0% { transform: translate(0, 0); }
-      20% { transform: translate(-5px, 5px); }
-      40% { transform: translate(5px, -5px); }
-      60% { transform: translate(-5px, 0); }
-      80% { transform: translate(5px, 5px); }
-      100% { transform: translate(0, 0); }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    @keyframes glitch-text {
-      0% { clip-path: inset(0 0 10% 0); }
-      50% { clip-path: inset(10% 0 0 0); }
-      100% { clip-path: inset(0 10% 0 0); }
-    }
-    @keyframes flicker {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.8; }
-    }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.03); }
-      100% { transform: scale(1); }
-    }
-    @keyframes mega-blast {
+    @keyframes clean-blast {
       0% { transform: scale(0); opacity: 0; filter: blur(0); }
-      20% { transform: scale(1.2); opacity: 1; filter: blur(5px); }
-      50% { transform: scale(1.8); opacity: 0.9; filter: blur(10px); }
-      80% { transform: scale(2.5); opacity: 0.6; filter: blur(15px); }
-      100% { transform: scale(3); opacity: 0; filter: blur(20px); }
-    }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
+      30% { transform: scale(1.5); opacity: 1; filter: blur(5px); }
+      70% { transform: scale(2); opacity: 0.7; filter: blur(10px); }
+      100% { transform: scale(2.5); opacity: 0; filter: blur(15px); }
     }
 
     /* Mobile Adjustments */
     @media (max-width: 600px) {
-      .container { padding: 10px; }
-      h1 { font-size: clamp(2rem, 10vw, 4rem); }
-      p { font-size: clamp(0.9rem, 3.5vw, 1.2rem); }
-      #task { padding: 10px; }
-      button { padding: 12px 20px; margin-top: 15px; }
+      .container { padding: 15px; }
+      h1 { margin-bottom: 10px; }
+      p { margin-bottom: 20px; }
+      #task { padding: 10px 12px; }
+      button { padding: 10px 25px; margin-top: 15px; }
     }
   </style>
 </head>
 <body>
-  <div class="glitch-bg"></div>
-  <div class="warning">WARNING: TASK ANNIHILATION IMMINENT</div>
   <div class="container">
     <h1>Taskplosion</h1>
-    <p>Drop a task. Pay a buck. Watch it DIE in a blaze of glory.</p>
-    <input type="text" id="task" placeholder="E.g., 'File taxes'">
-    <button onclick="explodeTask()">ANNIHILATE</button>
+    <p>Enter a task, pay $1, and watch it vanish in style.</p>
+    <input type="text" id="task" placeholder="E.g., 'Write emails'">
+    <button onclick="explodeTask()">Vaporize</button>
   </div>
   <div id="explosion"></div>
 
@@ -184,23 +131,15 @@
     async function explodeTask() {
       const task = document.getElementById('task').value;
       if (!task) {
-        alert('ENTER A TARGET, DESTROYER!');
+        alert('Please enter a task to vaporize!');
         return;
       }
 
-      // Unleash the mega blast
+      // Trigger the clean explosion
       const explosion = document.getElementById('explosion');
       explosion.classList.add('explosion-active');
 
-      // Shake the screen
-      document.body.style.animation = 'shake 0.5s';
-      setTimeout(() => document.body.style.animation = '', 500);
-
-      // Epic sound (uncomment with your own explosion.mp3)
-      // const boom = new Audio('path/to/mega-explosion.mp3');
-      // boom.play();
-
-      // After the chaos, proceed to payment
+      // Smooth transition to payment
       setTimeout(async () => {
         try {
           const response = await fetch('/create-checkout', {
@@ -210,36 +149,22 @@
           });
           const data = await response.json();
           if (!response.ok) {
-            alert('ANNIHILATION FAILED: ' + (data.error || 'SYSTEM MALFUNCTION'));
+            alert('Vaporization failed: ' + (data.error || 'Something went wrong'));
             explosion.classList.remove('explosion-active');
             return;
           }
-          window.location.href = data.url; // To Stripe we go!
+          window.location.href = data.url; // Redirect to Stripe
         } catch (error) {
-          alert('DESTRUCTION HALTED: ' + error.message);
+          alert('Error: ' + error.message);
           explosion.classList.remove('explosion-active');
         }
-      }, 1500); // Matches mega-blast duration
+      }, 1200); // Matches clean-blast duration
     }
 
     // Reset explosion
     document.getElementById('explosion').addEventListener('animationend', () => {
       explosion.classList.remove('explosion-active');
     });
-
-    // Screen shake animation
-    const styleSheet = document.createElement('style');
-    styleSheet.textContent = `
-      @keyframes shake {
-        0% { transform: translate(0, 0); }
-        20% { transform: translate(-10px, 10px); }
-        40% { transform: translate(10px, -10px); }
-        60% { transform: translate(-10px, 0); }
-        80% { transform: translate(10px, 10px); }
-        100% { transform: translate(0, 0); }
-      }
-    `;
-    document.head.appendChild(styleSheet);
   </script>
 </body>
 </html>
