@@ -107,6 +107,19 @@
       z-index: 1;
       animation: spark-fly 1s ease-out forwards;
     }
+    #result {
+      display: none;
+      max-width: 600px;
+      margin: 20px auto;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      animation: fadeIn 0.5s ease-in;
+    }
+    #result.active {
+      display: block;
+    }
 
     /* Animations */
     @keyframes slideIn {
@@ -127,6 +140,10 @@
       0% { opacity: 1; transform: translate(0, 0); }
       100% { opacity: 0; transform: translate(var(--x), var(--y)); }
     }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
 
     /* Mobile Adjustments */
     @media (max-width: 600px) {
@@ -135,6 +152,7 @@
       p { margin-bottom: 20px; }
       #task { padding: 10px 12px; max-width: 300px; }
       button { padding: 10px 30px; margin-top: 15px; }
+      #result { margin: 15px; padding: 10px; }
     }
   </style>
 </head>
@@ -144,6 +162,7 @@
     <p>Overwhelmed? Drop a task, simplify it for just $1, and crush it with clear steps!</p>
     <input type="text" id="task" placeholder="E.g., 'Plan a team meeting'">
     <button onclick="explodeTask()">Simplify Now</button>
+    <div id="result"></div>
   </div>
   <div id="explosion"></div>
 
@@ -190,8 +209,17 @@
 
           // Handle secret test task (test-explosion-123)
           if (data.simplifiedTask) {
-            const steps = data.simplifiedTask.steps.join('\n');
-            alert(`Your Simplified Task:\n${steps}`);
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+              <p style="font-size: 18px; margin-bottom: 15px;">Original Task: ${task}</p>
+              ${data.simplifiedTask.steps.map((step, index) => `
+                <p style="font-size: 16px; margin: 10px 0;">
+                  <strong>Step ${index + 1}:</strong> ${step}
+                </p>
+              `).join('')}
+              <a href="#" onclick="resetForm(); return false;" style="color: #ffb347; text-decoration: none; font-weight: bold;">Try another task!</a>
+            `;
+            resultDiv.classList.add('active');
             explosion.classList.remove('explosion-active');
             document.getElementById('task').value = ''; // Clear input
           } else {
@@ -208,6 +236,13 @@
     document.getElementById('explosion').addEventListener('animationend', () => {
       explosion.classList.remove('explosion-active');
     });
+
+    // Reset form to initial state
+    function resetForm() {
+      document.getElementById('result').classList.remove('active');
+      document.getElementById('task').value = '';
+      document.getElementById('task').focus();
+    }
   </script>
 </body>
 </html>
