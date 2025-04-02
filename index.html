@@ -187,7 +187,7 @@
       position: relative;
     }
     .testimonial:before {
-      content: """;
+      content: "";
       position: absolute;
       top: 10px;
       left: 10px;
@@ -611,8 +611,10 @@
   </footer>
 
   <script>
+    // Save the currently selected plan
     let currentPlan = 'single';
 
+    // Update to handle both test and paid tasks consistently
     async function explodeTask(planType = currentPlan) {
       currentPlan = planType;
       const task = document.getElementById('task').value;
@@ -621,9 +623,11 @@
         return;
       }
 
+      // Trigger explosion animation
       const explosion = document.getElementById('explosion');
       explosion.classList.add('explosion-active');
 
+      // Create sparks animation
       for (let i = 0; i < 20; i++) {
         const spark = document.createElement('div');
         spark.className = 'spark';
@@ -639,6 +643,7 @@
 
       setTimeout(async () => {
         try {
+          // Make API request to server
           const response = await fetch('/create-checkout', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -647,12 +652,14 @@
           
           const data = await response.json();
           
+          // Handle test task response (direct steps)
           if (data.simplifiedTask) {
             displayTaskResults(task, data.simplifiedTask);
             explosion.classList.remove('explosion-active');
           } 
-
+          // Handle Stripe checkout URL
           else if (data.url) {
+            // For paid tasks, redirect to Stripe
             window.location.href = data.url;
           } 
           // Handle errors
@@ -667,7 +674,7 @@
       }, 1500);
     }
 
-
+    // Display task results in the page
     function displayTaskResults(taskText, simplifiedTask, plan = 'single') {
       const resultDiv = document.getElementById('result');
       resultDiv.innerHTML = `
@@ -695,29 +702,29 @@
       });
     }
 
-
+    // Handle success page parameters when redirected from Stripe
     document.addEventListener('DOMContentLoaded', async () => {
       const url = new URL(window.location);
-
+      // Check if we're returning from a successful payment
       if (url.pathname === '/success' || url.pathname === '/handle-success') {
         const task = url.searchParams.get('task');
         const plan = url.searchParams.get('plan') || 'single';
         
         if (task) {
-
+          // Show loading animation
           const explosion = document.getElementById('explosion');
           explosion.classList.add('explosion-active');
           
           try {
-
+            // Fetch the results directly from the endpoint
             const response = await fetch(`/handle-success?task=${encodeURIComponent(task)}&plan=${plan}`);
             const data = await response.json();
             
             if (data.simplifiedTask) {
-
+              // Display the results in the original page
               displayTaskResults(task, data.simplifiedTask, plan);
               
-  
+              // Update URL to remove the success parameters without reloading
               window.history.pushState({}, '', '/');
             } else if (data.error) {
               alert('Error: ' + data.error);
@@ -741,9 +748,9 @@
       document.getElementById('task').focus();
     }
 
-
+    // Update the bundle button in the pricing section
     document.addEventListener('DOMContentLoaded', () => {
-
+      // Find all buttons that redirect to /checkout?plan=bundle and update them
       const bundleButtons = document.querySelectorAll('button[onclick="window.location.href=\'/checkout?plan=bundle\'"]');
       bundleButtons.forEach(button => {
         button.onclick = () => explodeTask('bundle');
