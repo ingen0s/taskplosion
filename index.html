@@ -66,6 +66,12 @@
       font-size: 1.5rem;
       margin-bottom: 30px;
       box-shadow: 0 4px 15px rgba(255, 111, 97, 0.5);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .price-tag:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 111, 97, 0.7);
     }
     .benefits {
       display: flex;
@@ -116,6 +122,9 @@
       background: rgba(255, 255, 255, 0.15);
       box-shadow: 0 0 15px rgba(255, 179, 71, 0.7);
     }
+    #task::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
     .cta-button {
       padding: 15px 40px;
       font-size: clamp(1.1rem, 2.5vw, 1.3rem);
@@ -134,6 +143,10 @@
       background: linear-gradient(45deg, #ffb347, #ff6f61);
       box-shadow: 0 8px 25px rgba(255, 179, 71, 0.8);
       transform: translateY(-4px);
+    }
+    .cta-button:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(255, 179, 71, 0.5), 0 6px 20px rgba(255, 111, 97, 0.6);
     }
     .under-cta {
       font-size: 0.9rem;
@@ -403,6 +416,11 @@
       transition: color 0.3s ease;
     }
     footer a:hover { color: #ff6f61; text-decoration: underline; }
+    footer a:focus {
+      outline: none;
+      text-decoration: underline;
+      box-shadow: 0 0 0 2px rgba(255, 179, 71, 0.5);
+    }
     /* Explosion Animation */
     #explosion {
       position: fixed;
@@ -429,6 +447,20 @@
       z-index: 1;
       animation: spark-fly 1s ease-out forwards;
     }
+    /* Skip to main content */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: #ffb347;
+      color: #0f2027;
+      padding: 8px;
+      z-index: 100;
+      transition: top 0.3s ease;
+    }
+    .skip-link:focus {
+      top: 0;
+    }
     /* Animations */
     @keyframes slideIn { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes pulseGlow { from { text-shadow: 0 0 5px #ff6f61, 0 0 10px #ffb347; } to { text-shadow: 0 0 15px #ff6f61, 0 0 25px #ffb347; } }
@@ -441,9 +473,9 @@
       .hero h1 { font-size: clamp(2.8rem, 6vw, 4.5rem); }
       .hero-subtitle { font-size: clamp(1.3rem, 2.5vw, 1.8rem); }
       .hero-description { font-size: clamp(1.1rem, 2vw, 1.3rem); }
-      .input-group { flex-direction: column; gap: 15px; }
+      .input-group { flex-direction: column; align-items: center; gap: 15px; }
       #task { max-width: 100%; }
-      .cta-button { padding: 12px 30px; width: 100%; }
+      .cta-button { width: auto; max-width: 100%; }
       .benefits { flex-direction: column; align-items: center; }
       .benefit { max-width: 100%; }
       .social-proof, .value-prop, .pricing, .final-cta { padding: 40px 15px; }
@@ -455,14 +487,17 @@
       .hero-description { font-size: 1rem; }
       .price-tag { font-size: 1.2rem; }
       .testimonial-grid, .feature-grid, .pricing-grid { grid-template-columns: 1fr; }
+      .cta-button { padding: 12px 20px; font-size: 1rem; }
     }
   </style>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
   <!-- Hero Section -->
-  <section class="hero">
+  <section class="hero" id="main-content">
     <h1>Taskplosion</h1>
-    <div class="price-tag">Just $1 Per Task</div>
+    <div class="price-tag" role="button" tabindex="0" onclick="document.getElementById('task').focus();" onkeypress="if(event.key==='Enter') document.getElementById('task').focus();">Just $1 Per Task</div>
     <h2 class="hero-subtitle">Turn Complex Tasks Into Simple Steps In Seconds</h2>
     <p class="hero-description">Stop feeling overwhelmed! Enter any task below and get an instant breakdown of actionable steps you can start right now.</p>
     
@@ -482,13 +517,14 @@
     </div>
     
     <div class="input-group">
-      <input type="text" id="task" placeholder="E.g., 'Organize my home office' or 'Plan a team retreat'">
-      <button class="cta-button" onclick="explodeTask()">SIMPLIFY NOW</button>
+      <label for="task" class="visually-hidden" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;">Enter your task</label>
+      <input type="text" id="task" placeholder="E.g., 'Organize my home office' or 'Plan a team retreat'" aria-describedby="taskHint">
+      <button class="cta-button" onclick="explodeTask()" aria-label="Simplify your task">SIMPLIFY NOW</button>
     </div>
-    <p class="under-cta">Over 10,000+ tasks simplified this month!</p>
-    <div id="result"></div>
+    <p id="taskHint" class="under-cta">Over 10,000+ tasks simplified this month!</p>
+    <div id="result" aria-live="polite"></div>
   </section>
-  <div id="explosion"></div>
+  <div id="explosion" aria-hidden="true"></div>
 
   <!-- Social Proof Section -->
   <section class="social-proof">
@@ -499,7 +535,7 @@
         <div class="testimonial">
           <p>"I was putting off organizing our department's quarterly review for weeks. Taskplosion broke it down so simply that I finished it in one afternoon. Best dollar I've ever spent!"</p>
           <div class="author">
-            <div class="author-avatar">SK</div>
+            <div class="author-avatar" aria-hidden="true">SK</div>
             <div class="author-info">
               <div class="author-name">Sarah K.</div>
               <div class="author-title">Marketing Director</div>
@@ -509,7 +545,7 @@
         <div class="testimonial">
           <p>"As a student juggling classes and work, I was drowning in my thesis project. Taskplosion gave me a clear roadmap that made everything manageable. I've used it 12 times now!"</p>
           <div class="author">
-            <div class="author-avatar">JT</div>
+            <div class="author-avatar" aria-hidden="true">JT</div>
             <div class="author-info">
               <div class="author-name">James T.</div>
               <div class="author-title">Graduate Student</div>
@@ -519,7 +555,7 @@
         <div class="testimonial">
           <p>"I needed to plan my daughter's birthday party and felt completely lost. One dollar later, I had a perfect step-by-step plan. Even my husband was impressed with how organized I was!"</p>
           <div class="author">
-            <div class="author-avatar">ML</div>
+            <div class="author-avatar" aria-hidden="true">ML</div>
             <div class="author-info">
               <div class="author-name">Maria L.</div>
               <div class="author-title">Busy Parent</div>
@@ -637,6 +673,7 @@
         spark.style.setProperty('--y', `${y}px`);
         spark.style.left = '50%';
         spark.style.top = '50%';
+        spark.setAttribute('aria-hidden', 'true');
         document.body.appendChild(spark);
         setTimeout(() => spark.remove(), 1000);
       }
@@ -738,8 +775,9 @@
       }
     });
 
+    // Handle explosion animation end
     document.getElementById('explosion').addEventListener('animationend', () => {
-      explosion.classList.remove('explosion-active');
+      document.getElementById('explosion').classList.remove('explosion-active');
     });
 
     function resetForm() {
@@ -748,12 +786,31 @@
       document.getElementById('task').focus();
     }
 
-    // Update the bundle button in the pricing section
+    // Update all buttons in the page
     document.addEventListener('DOMContentLoaded', () => {
-      // Find all buttons that redirect to /checkout?plan=bundle and update them
+      // Ensure all buttons have proper functionality
       const bundleButtons = document.querySelectorAll('button[onclick="window.location.href=\'/checkout?plan=bundle\'"]');
       bundleButtons.forEach(button => {
         button.onclick = () => explodeTask('bundle');
+      });
+      
+      // Make price tag interactive
+      const priceTag = document.querySelector('.price-tag');
+      if (priceTag) {
+        priceTag.addEventListener('click', () => {
+          document.getElementById('task').focus();
+        });
+      }
+      
+      // Add keyboard navigation support for interactive elements
+      const interactiveElements = document.querySelectorAll('[role="button"]');
+      interactiveElements.forEach(element => {
+        element.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            element.click();
+          }
+        });
       });
     });
   </script>
