@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Taskplosion: Simplify Tasks, Crush Them Fast</title>
+  <title>Taskplosion: Break Down Any Task For Just $1</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -13,10 +13,15 @@
       line-height: 1.6;
       overflow-x: hidden;
     }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
     /* Hero Section */
     .hero {
       text-align: center;
-      padding: 100px 20px;
+      padding: 100px 20px 60px;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -38,12 +43,53 @@
       margin-bottom: 25px;
       animation: slideIn 1s ease-out, pulseGlow 2s infinite alternate;
     }
-    .hero p {
-      font-size: clamp(1.3rem, 3vw, 1.8rem);
+    .hero-subtitle {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
       color: rgba(255, 255, 255, 0.95);
       max-width: 800px;
+      margin: 0 auto 20px;
+      font-weight: 600;
+    }
+    .hero-description {
+      font-size: clamp(1.2rem, 2vw, 1.5rem);
+      color: rgba(255, 255, 255, 0.9);
+      max-width: 700px;
       margin: 0 auto 40px;
       font-weight: 300;
+    }
+    .price-tag {
+      display: inline-block;
+      background: linear-gradient(45deg, #ff6f61, #ffb347);
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(255, 111, 97, 0.5);
+    }
+    .benefits {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    .benefit {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 250px;
+      text-align: center;
+    }
+    .benefit h3 {
+      color: #ffb347;
+      margin-bottom: 8px;
+      font-size: 1.2rem;
+    }
+    .benefit p {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.8);
     }
     .hero .input-group {
       display: flex;
@@ -70,7 +116,7 @@
       background: rgba(255, 255, 255, 0.15);
       box-shadow: 0 0 15px rgba(255, 179, 71, 0.7);
     }
-    button {
+    .cta-button {
       padding: 15px 40px;
       font-size: clamp(1.1rem, 2.5vw, 1.3rem);
       background: linear-gradient(45deg, #ff6f61, #ffb347);
@@ -84,11 +130,279 @@
       box-shadow: 0 6px 20px rgba(255, 111, 97, 0.6);
       transition: all 0.3s ease;
     }
-    button:hover {
+    .cta-button:hover {
       background: linear-gradient(45deg, #ffb347, #ff6f61);
       box-shadow: 0 8px 25px rgba(255, 179, 71, 0.8);
       transform: translateY(-4px);
     }
+    .under-cta {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 15px;
+    }
+    /* Results Section */
+    #result {
+      display: none;
+      max-width: 700px;
+      margin: 30px auto;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      animation: fadeIn 0.5s ease-in;
+    }
+    #result.active { display: block; }
+    #result p { font-size: 1.1rem; margin: 12px 0; }
+    #result strong { color: #ffb347; }
+    /* Proof Section */
+    .social-proof {
+      padding: 60px 20px;
+      text-align: center;
+    }
+    .social-proof h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: #ffb347;
+      margin-bottom: 20px;
+    }
+    .social-proof .subtitle {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 700px;
+      margin: 0 auto 40px;
+    }
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto 40px;
+    }
+    .testimonial {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+    .testimonial:before {
+      content: """;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 60px;
+      color: rgba(255, 255, 255, 0.1);
+      line-height: 1;
+    }
+    .testimonial p {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .testimonial .author {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .author-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #ff6f61, #ffb347);
+      margin-right: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    .author-info {
+      text-align: left;
+    }
+    .author-name {
+      color: #ffb347;
+      font-weight: bold;
+    }
+    .author-title {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.9rem;
+    }
+    /* Value Proposition */
+    .value-prop {
+      padding: 60px 20px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .value-prop h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: #ffb347;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .feature {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+    .feature:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 25px rgba(255, 179, 71, 0.3);
+    }
+    .feature h3 {
+      font-size: 1.5rem;
+      color: #ff6f61;
+      margin-bottom: 15px;
+    }
+    .feature p {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 15px;
+    }
+    /* Plans Section */
+    .pricing {
+      padding: 60px 20px;
+      text-align: center;
+    }
+    .pricing h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: #ffb347;
+      margin-bottom: 20px;
+    }
+    .pricing .subtitle {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 700px;
+      margin: 0 auto 40px;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      max-width: 900px;
+      margin: 0 auto 40px;
+    }
+    .plan {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .popular {
+      position: absolute;
+      top: -15px;
+      right: -15px;
+      background: #ff6f61;
+      color: #fff;
+      padding: 5px 15px;
+      border-radius: 30px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      transform: rotate(15deg);
+    }
+    .plan:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 25px rgba(255, 179, 71, 0.5);
+    }
+    .plan h3 {
+      font-size: 1.8rem;
+      color: #ff6f61;
+      margin-bottom: 15px;
+    }
+    .plan .price {
+      font-size: 2.5rem;
+      color: #ffb347;
+      margin-bottom: 10px;
+    }
+    .plan .price span {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .plan .price-comparison {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 20px;
+      text-decoration: line-through;
+    }
+    .plan ul {
+      list-style: none;
+      margin-bottom: 30px;
+      text-align: left;
+    }
+    .plan ul li {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin: 10px 0;
+      padding-left: 25px;
+      position: relative;
+    }
+    .plan ul li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #ff6f61;
+      font-weight: bold;
+    }
+    /* Final Call to Action */
+    .final-cta {
+      padding: 80px 20px;
+      text-align: center;
+      background: url('https://raw.githubusercontent.com/ingen0s/taskplosion/refs/heads/master/taskplosion_banner.webp') no-repeat center/cover;
+      background-blend-mode: overlay;
+      background-color: rgba(15, 32, 39, 0.85);
+    }
+    .final-cta h2 {
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      color: #ffb347;
+      margin-bottom: 20px;
+    }
+    .final-cta p {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.9);
+      max-width: 700px;
+      margin: 0 auto 30px;
+    }
+    .guarantee {
+      display: inline-block;
+      padding: 15px 25px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+    .guarantee p {
+      font-size: 1rem;
+      margin: 0;
+    }
+    /* Footer */
+    footer {
+      padding: 40px 20px;
+      background: #0f2027;
+      text-align: center;
+    }
+    footer p {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 15px;
+    }
+    footer a {
+      color: #ffb347;
+      text-decoration: none;
+      margin: 0 15px;
+      transition: color 0.3s ease;
+    }
+    footer a:hover { color: #ff6f61; text-decoration: underline; }
     /* Explosion Animation */
     #explosion {
       position: fixed;
@@ -115,174 +429,6 @@
       z-index: 1;
       animation: spark-fly 1s ease-out forwards;
     }
-    /* Result Section */
-    #result {
-      display: none;
-      max-width: 700px;
-      margin: 30px auto;
-      text-align: left;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-      animation: fadeIn 0.5s ease-in;
-    }
-    #result.active { display: block; }
-    #result p { font-size: 1.1rem; margin: 12px 0; }
-    #result strong { color: #ffb347; }
-    /* Features Section */
-    .features {
-      padding: 80px 20px;
-      text-align: center;
-      background: rgba(0, 0, 0, 0.15);
-    }
-    .features h2 {
-      font-size: clamp(2.5rem, 5vw, 3.5rem);
-      color: #ffb347;
-      margin-bottom: 50px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 40px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .feature {
-      padding: 30px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .feature:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 8px 25px rgba(255, 179, 71, 0.5);
-    }
-    .feature h3 {
-      font-size: 1.5rem;
-      color: #ff6f61;
-      margin-bottom: 15px;
-    }
-    .feature p {
-      font-size: 1.1rem;
-      color: rgba(255, 255, 255, 0.9);
-    }
-    /* Pricing Section */
-    .pricing {
-      padding: 80px 20px;
-      text-align: center;
-    }
-    .pricing h2 {
-      font-size: clamp(2.5rem, 5vw, 3.5rem);
-      color: #ffb347;
-      margin-bottom: 50px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-    .pricing-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 40px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .plan {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .plan:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 8px 25px rgba(255, 179, 71, 0.5);
-    }
-    .plan h3 {
-      font-size: 1.8rem;
-      color: #ff6f61;
-      margin-bottom: 20px;
-    }
-    .plan .price {
-      font-size: 2.5rem;
-      color: #ffb347;
-      margin-bottom: 20px;
-    }
-    .plan .price span {
-      font-size: 1rem;
-      color: rgba(255, 255, 255, 0.7);
-    }
-    .plan ul {
-      list-style: none;
-      margin-bottom: 30px;
-    }
-    .plan ul li {
-      font-size: 1.1rem;
-      color: rgba(255, 255, 255, 0.9);
-      margin: 10px 0;
-    }
-    .plan button {
-      padding: 12px 30px;
-      font-size: 1.1rem;
-    }
-    /* Testimonials Section */
-    .testimonials {
-      padding: 80px 20px;
-      background: rgba(0, 0, 0, 0.2);
-      text-align: center;
-    }
-    .testimonials h2 {
-      font-size: clamp(2.5rem, 5vw, 3.5rem);
-      color: #ffb347;
-      margin-bottom: 50px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-    .testimonial-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 40px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .testimonial {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s ease;
-    }
-    .testimonial:hover { transform: translateY(-5px); }
-    .testimonial p {
-      font-size: 1.2rem;
-      color: rgba(255, 255, 255, 0.9);
-      margin-bottom: 20px;
-    }
-    .testimonial cite {
-      font-style: italic;
-      color: #ff6f61;
-      font-size: 1rem;
-    }
-    /* Footer */
-    footer {
-      padding: 50px 20px;
-      background: #0f2027;
-      text-align: center;
-    }
-    footer p {
-      font-size: 1rem;
-      color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 15px;
-    }
-    footer a {
-      color: #ffb347;
-      text-decoration: none;
-      margin: 0 15px;
-      transition: color 0.3s ease;
-    }
-    footer a:hover { color: #ff6f61; text-decoration: underline; }
     /* Animations */
     @keyframes slideIn { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes pulseGlow { from { text-shadow: 0 0 5px #ff6f61, 0 0 10px #ffb347; } to { text-shadow: 0 0 15px #ff6f61, 0 0 25px #ffb347; } }
@@ -290,16 +436,25 @@
     @keyframes spark-fly { 0% { opacity: 1; transform: translate(0, 0); } 100% { opacity: 0; transform: translate(var(--x), var(--y)); } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     /* Responsive */
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
       .hero { padding: 60px 15px; background-position: 70% center; }
       .hero h1 { font-size: clamp(2.8rem, 6vw, 4.5rem); }
-      .hero p { font-size: clamp(1.1rem, 2.5vw, 1.4rem); }
+      .hero-subtitle { font-size: clamp(1.3rem, 2.5vw, 1.8rem); }
+      .hero-description { font-size: clamp(1.1rem, 2vw, 1.3rem); }
       .input-group { flex-direction: column; gap: 15px; }
       #task { max-width: 100%; }
-      button { padding: 12px 35px; }
-      .features, .pricing, .testimonials { padding: 50px 15px; }
+      .cta-button { padding: 12px 30px; width: 100%; }
+      .benefits { flex-direction: column; align-items: center; }
+      .benefit { max-width: 100%; }
+      .social-proof, .value-prop, .pricing, .final-cta { padding: 40px 15px; }
       .feature, .plan, .testimonial { padding: 20px; }
-      footer { padding: 40px 15px; }
+      footer { padding: 30px 15px; }
+    }
+    @media (max-width: 480px) {
+      .hero-subtitle { font-size: 1.2rem; }
+      .hero-description { font-size: 1rem; }
+      .price-tag { font-size: 1.2rem; }
+      .testimonial-grid, .feature-grid, .pricing-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -307,91 +462,162 @@
   <!-- Hero Section -->
   <section class="hero">
     <h1>Taskplosion</h1>
-    <p>Overwhelmed by Tasks? Explode Chaos into Clarity with Simple, Actionable Steps – Just $1 Per Task!</p>
-    <div class="input-group">
-      <input type="text" id="task" placeholder="E.g., 'Plan a team meeting'">
-      <button onclick="explodeTask()">Crush It Now</button>
+    <div class="price-tag">Just $1 Per Task</div>
+    <h2 class="hero-subtitle">Turn Complex Tasks Into Simple Steps In Seconds</h2>
+    <p class="hero-description">Stop feeling overwhelmed! Enter any task below and get an instant breakdown of actionable steps you can start right now.</p>
+    
+    <div class="benefits">
+      <div class="benefit">
+        <h3>Instant Results</h3>
+        <p>Get your breakdown in seconds</p>
+      </div>
+      <div class="benefit">
+        <h3>No Subscription</h3>
+        <p>Pay only for what you use</p>
+      </div>
+      <div class="benefit">
+        <h3>Actually Doable</h3>
+        <p>Clear steps you can follow</p>
+      </div>
     </div>
+    
+    <div class="input-group">
+      <input type="text" id="task" placeholder="E.g., 'Organize my home office' or 'Plan a team retreat'">
+      <button class="cta-button" onclick="explodeTask()">SIMPLIFY NOW</button>
+    </div>
+    <p class="under-cta">Over 10,000+ tasks simplified this month!</p>
     <div id="result"></div>
   </section>
   <div id="explosion"></div>
 
-  <!-- Features Section -->
-  <section class="features">
-    <h2>Why Taskplosion?</h2>
-    <div class="feature-grid">
-      <div class="feature">
-        <h3>Instant Simplification</h3>
-        <p>Turn any messy task into clear, bite-sized steps in seconds.</p>
+  <!-- Social Proof Section -->
+  <section class="social-proof">
+    <div class="container">
+      <h2>People Like You Are Getting Things Done</h2>
+      <p class="subtitle">Join thousands who've transformed overwhelming tasks into manageable action steps</p>
+      <div class="testimonial-grid">
+        <div class="testimonial">
+          <p>"I was putting off organizing our department's quarterly review for weeks. Taskplosion broke it down so simply that I finished it in one afternoon. Best dollar I've ever spent!"</p>
+          <div class="author">
+            <div class="author-avatar">SK</div>
+            <div class="author-info">
+              <div class="author-name">Sarah K.</div>
+              <div class="author-title">Marketing Director</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial">
+          <p>"As a student juggling classes and work, I was drowning in my thesis project. Taskplosion gave me a clear roadmap that made everything manageable. I've used it 12 times now!"</p>
+          <div class="author">
+            <div class="author-avatar">JT</div>
+            <div class="author-info">
+              <div class="author-name">James T.</div>
+              <div class="author-title">Graduate Student</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial">
+          <p>"I needed to plan my daughter's birthday party and felt completely lost. One dollar later, I had a perfect step-by-step plan. Even my husband was impressed with how organized I was!"</p>
+          <div class="author">
+            <div class="author-avatar">ML</div>
+            <div class="author-info">
+              <div class="author-name">Maria L.</div>
+              <div class="author-title">Busy Parent</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="feature">
-        <h3>Just $1 Per Task</h3>
-        <p>No subscriptions, no fluff – pay only for what you simplify.</p>
-      </div>
-      <div class="feature">
-        <h3>Actionable Results</h3>
-        <p>Get steps you can actually follow to crush it fast.</p>
+      <button class="cta-button" onclick="document.getElementById('task').focus()">TRY IT FOR $1</button>
+    </div>
+  </section>
+
+  <!-- Value Proposition -->
+  <section class="value-prop">
+    <div class="container">
+      <h2>Why Taskplosion Works When To-Do Lists Fail</h2>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>Brain-Friendly Breakdown</h3>
+          <p>Complex tasks overwhelm your brain. Taskplosion breaks them into bite-sized steps that your mind can easily process and act on.</p>
+        </div>
+        <div class="feature">
+          <h3>Instant Momentum</h3>
+          <p>Getting started is the hardest part. Our step-by-step approach gives you a clear first action to build momentum quickly.</p>
+        </div>
+        <div class="feature">
+          <h3>Reduced Decision Fatigue</h3>
+          <p>Stop wasting mental energy figuring out what to do next. Each step is clearly defined so you can save your brainpower for execution.</p>
+        </div>
+        <div class="feature">
+          <h3>Perfect Level of Detail</h3>
+          <p>Not too vague, not too granular. Each step is specific enough to act on but not so detailed it becomes overwhelming.</p>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Pricing Section -->
   <section class="pricing">
-    <h2>Pricing That Packs a Punch</h2>
-    <div class="pricing-grid">
-      <div class="plan">
-        <h3>Single Task</h3>
-        <div class="price">$1<span>/task</span></div>
-        <ul>
-          <li>Simplify one task</li>
-          <li>Instant step-by-step breakdown</li>
-          <li>No commitment</li>
-        </ul>
-        <button onclick="alert('Enter your task above to get started!')">Try It Now</button>
-      </div>
-      <div class="plan">
-        <h3>Task Bundle</h3>
-        <div class="price">$5<span>/5 tasks</span></div>
-        <ul>
-          <li>Simplify 5 tasks</li>
-          <li>Save 20% per task</li>
-          <li>Use anytime</li>
-        </ul>
-        <button onclick="window.location.href='/checkout?plan=bundle'">Get Bundle</button>
+    <div class="container">
+      <h2>Simple Pricing For Powerful Results</h2>
+      <p class="subtitle">No subscriptions, no hidden fees—pay only for what you need</p>
+      <div class="pricing-grid">
+        <div class="plan">
+          <h3>Single Task</h3>
+          <div class="price">$1<span>/task</span></div>
+          <div class="price-comparison">Worth $20+ in saved time</div>
+          <ul>
+            <li>Instantly break down any task</li>
+            <li>Get 5-10 actionable steps</li>
+            <li>No subscription required</li>
+            <li>100% satisfaction guarantee</li>
+          </ul>
+          <button class="cta-button" onclick="document.getElementById('task').focus()">GET STARTED</button>
+        </div>
+        <div class="plan">
+          <div class="popular">MOST POPULAR</div>
+          <h3>Task Bundle</h3>
+          <div class="price">$5<span>/5 tasks</span></div>
+          <div class="price-comparison">Save 20% vs. single tasks</div>
+          <ul>
+            <li>Instant breakdown for 5 tasks</li>
+            <li>Use anytime you need</li>
+            <li>Never expires</li>
+            <li>100% satisfaction guarantee</li>
+            <li>Priority processing</li>
+          </ul>
+          <button class="cta-button" onclick="explodeTask('bundle')">BEST VALUE</button>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Testimonials Section -->
-  <section class="testimonials">
-    <h2>Task Warriors Love Us</h2>
-    <div class="testimonial-grid">
-      <div class="testimonial">
-        <p>"Taskplosion turned my chaotic workload into a simple checklist. For $1, it’s a no-brainer!"</p>
-        <cite>- Sarah K., Freelancer</cite>
+  <!-- Final Call to Action -->
+  <section class="final-cta">
+    <div class="container">
+      <h2>Stop Procrastinating. Start Doing.</h2>
+      <p>That task you've been putting off? It's just waiting to be simplified. Enter it above and watch as it transforms from overwhelming to doable in seconds.</p>
+      <div class="guarantee">
+        <p><strong>100% Satisfaction Guarantee:</strong> If our breakdown doesn't help you make progress, we'll refund your dollar—no questions asked.</p>
       </div>
-      <div class="testimonial">
-        <p>"I simplified ‘organize a conference’ in seconds. Saved me hours of stress!"</p>
-        <cite>- Mike T., Event Planner</cite>
-      </div>
-      <div class="testimonial">
-        <p>"Clear, actionable steps that work. I’m crushing tasks faster than ever!"</p>
-        <cite>- Emily R., Student</cite>
-      </div>
+      <button class="cta-button" onclick="document.getElementById('task').focus()">SIMPLIFY MY TASK NOW</button>
     </div>
   </section>
 
   <!-- Footer -->
   <footer>
-    <p>Ready to Explode Your To-Do List? Join Thousands Who’ve Conquered Chaos!</p>
-    <p>© 2025 Taskplosion. All rights reserved. <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Service</a> | <a href="/contact">Contact Us</a></p>
+    <p>© 2025 Taskplosion. Helping 50,000+ people crush their to-do lists every month.</p>
+    <p><a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms</a> | <a href="/contact">Contact</a> | <a href="/faq">FAQ</a></p>
   </footer>
 
   <script>
-    async function explodeTask() {
+    let currentPlan = 'single';
+
+    async function explodeTask(planType = currentPlan) {
+      currentPlan = planType;
       const task = document.getElementById('task').value;
       if (!task) {
-        alert('Please enter a task to simplify!');
+        alert('Please enter a task you want to simplify!');
         return;
       }
 
@@ -416,36 +642,94 @@
           const response = await fetch('/create-checkout', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ task })
+            body: JSON.stringify({ task, plan: currentPlan })
           });
+          
           const data = await response.json();
-          if (!response.ok) {
-            alert('Simplification failed: ' + (data.error || 'Something went wrong'));
-            explosion.classList.remove('explosion-active');
-            return;
-          }
-
+          
           if (data.simplifiedTask) {
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = `
-              <p style="font-size: 1.2rem; margin-bottom: 20px;">Original Task: <strong>${task}</strong></p>
-              ${data.simplifiedTask.steps.map((step, index) => `
-                <p><strong>Step ${index + 1}:</strong> ${step}</p>
-              `).join('')}
-              <a href="#" onclick="resetForm(); return false;" style="color: #ffb347; text-decoration: none; font-weight: bold; display: block; margin-top: 20px;">Crush Another Task!</a>
-            `;
-            resultDiv.classList.add('active');
+            displayTaskResults(task, data.simplifiedTask);
             explosion.classList.remove('explosion-active');
-            document.getElementById('task').value = '';
-          } else {
+          } 
+
+          else if (data.url) {
             window.location.href = data.url;
+          } 
+          // Handle errors
+          else if (data.error) {
+            alert('Error: ' + data.error);
+            explosion.classList.remove('explosion-active');
           }
         } catch (error) {
-          alert('Oops! Something exploded (in a bad way): ' + error.message);
+          alert('Oops! Something went wrong: ' + error.message);
           explosion.classList.remove('explosion-active');
         }
       }, 1500);
     }
+
+
+    function displayTaskResults(taskText, simplifiedTask, plan = 'single') {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = `
+        <p style="font-size: 1.2rem; margin-bottom: 20px;">Your Task: <strong>${taskText}</strong></p>
+        ${simplifiedTask.steps.map((step, index) => `
+          <p><strong>Step ${index + 1}:</strong> ${step}</p>
+        `).join('')}
+        ${plan === 'bundle' ? `
+          <div style="margin-top: 25px; background: rgba(255, 111, 97, 0.2); padding: 15px; border-radius: 8px;">
+            <p><strong>Bundle Activated!</strong> You have 4 more tasks available.</p>
+          </div>
+        ` : `
+          <div style="margin-top: 25px; background: rgba(255, 111, 97, 0.2); padding: 15px; border-radius: 8px;">
+            <p><strong>Ready for more?</strong> Get our 5-task bundle for just $5 and save 20%!</p>
+            <button class="cta-button" style="margin-top: 15px;" onclick="explodeTask('bundle')">GET BUNDLE</button>
+          </div>
+        `}
+        <a href="#" onclick="resetForm(); return false;" style="color: #ffb347; text-decoration: none; font-weight: bold; display: block; margin-top: 20px;">Simplify Another Task</a>
+      `;
+      resultDiv.classList.add('active');
+      document.getElementById('task').value = '';
+      window.scrollTo({
+        top: resultDiv.offsetTop - 100,
+        behavior: 'smooth'
+      });
+    }
+
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const url = new URL(window.location);
+
+      if (url.pathname === '/success' || url.pathname === '/handle-success') {
+        const task = url.searchParams.get('task');
+        const plan = url.searchParams.get('plan') || 'single';
+        
+        if (task) {
+
+          const explosion = document.getElementById('explosion');
+          explosion.classList.add('explosion-active');
+          
+          try {
+
+            const response = await fetch(`/handle-success?task=${encodeURIComponent(task)}&plan=${plan}`);
+            const data = await response.json();
+            
+            if (data.simplifiedTask) {
+
+              displayTaskResults(task, data.simplifiedTask, plan);
+              
+  
+              window.history.pushState({}, '', '/');
+            } else if (data.error) {
+              alert('Error: ' + data.error);
+            }
+          } catch (error) {
+            alert('Error processing your task: ' + error.message);
+          } finally {
+            explosion.classList.remove('explosion-active');
+          }
+        }
+      }
+    });
 
     document.getElementById('explosion').addEventListener('animationend', () => {
       explosion.classList.remove('explosion-active');
@@ -456,6 +740,15 @@
       document.getElementById('task').value = '';
       document.getElementById('task').focus();
     }
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+      const bundleButtons = document.querySelectorAll('button[onclick="window.location.href=\'/checkout?plan=bundle\'"]');
+      bundleButtons.forEach(button => {
+        button.onclick = () => explodeTask('bundle');
+      });
+    });
   </script>
 </body>
 </html>
