@@ -5,45 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Taskplosion: Simplify Tasks, Crush Them Fast</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
       font-family: 'Helvetica Neue', Arial, sans-serif;
       color: #fff;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      position: relative;
+      line-height: 1.6;
+      overflow-x: hidden;
     }
-    .container {
+    /* Hero Section */
+    .hero {
       text-align: center;
-      padding: 20px;
-      max-width: 90vw;
+      padding: 80px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
       z-index: 10;
     }
-    h1 {
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
+    .hero h1 {
+      font-size: clamp(3rem, 8vw, 5rem);
       font-weight: 800;
       letter-spacing: 2px;
       background: linear-gradient(to right, #ff6f61, #ffb347);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
       animation: slideIn 1s ease-out, pulseGlow 2s infinite alternate;
     }
-    p {
-      font-size: clamp(1rem, 2.5vw, 1.3rem);
-      color: rgba(255, 255, 255, 0.85);
-      margin-bottom: 25px;
-      font-weight: 300;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    .hero p {
+      font-size: clamp(1.2rem, 3vw, 1.5rem);
+      color: rgba(255, 255, 255, 0.9);
+      max-width: 700px;
+      margin: 0 auto 30px;
+    }
+    .hero .input-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      max-width: 600px;
+      margin: 0 auto;
     }
     #task {
       width: 100%;
@@ -63,7 +67,6 @@
       box-shadow: 0 0 12px rgba(255, 179, 71, 0.6);
     }
     button {
-      margin-top: 20px;
       padding: 12px 35px;
       font-size: clamp(1rem, 2.5vw, 1.2rem);
       background: linear-gradient(45deg, #ff6f61, #ffb347);
@@ -82,6 +85,7 @@
       box-shadow: 0 6px 20px rgba(255, 179, 71, 0.7);
       transform: translateY(-3px);
     }
+    /* Explosion Animation */
     #explosion {
       position: fixed;
       top: 0;
@@ -107,64 +111,137 @@
       z-index: 1;
       animation: spark-fly 1s ease-out forwards;
     }
+    /* Result Section */
     #result {
       display: none;
       max-width: 600px;
       margin: 20px auto;
       text-align: left;
       background: rgba(255, 255, 255, 0.1);
-      padding: 15px;
+      padding: 20px;
       border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       animation: fadeIn 0.5s ease-in;
     }
-    #result.active {
-      display: block;
+    #result.active { display: block; }
+    #result p { font-size: 16px; margin: 10px 0; }
+    #result strong { color: #ffb347; }
+    /* Testimonials Section */
+    .testimonials {
+      padding: 60px 20px;
+      background: rgba(0, 0, 0, 0.2);
+      text-align: center;
     }
+    .testimonials h2 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: #ffb347;
+      margin-bottom: 40px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .testimonial {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+    }
+    .testimonial:hover { transform: translateY(-5px); }
+    .testimonial p {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 15px;
+    }
+    .testimonial cite {
+      display: block;
+      font-style: italic;
+      color: #ff6f61;
+      font-size: 0.95rem;
+    }
+    /* Footer */
+    footer {
+      padding: 40px 20px;
+      background: #0f2027;
+      text-align: center;
+    }
+    footer p {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 10px;
+    }
+    footer a {
+      color: #ffb347;
+      text-decoration: none;
+      margin: 0 10px;
+      transition: color 0.3s ease;
+    }
+    footer a:hover { color: #ff6f61; text-decoration: underline; }
 
     /* Animations */
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(-30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes pulseGlow {
-      from { text-shadow: 0 0 5px #ff6f61, 0 0 10px #ffb347; }
-      to { text-shadow: 0 0 10px #ff6f61, 0 0 20px #ffb347; }
-    }
-    @keyframes ignite-blast {
-      0% { transform: scale(0); opacity: 0; filter: blur(0); }
-      40% { transform: scale(1.3); opacity: 1; filter: blur(8px); }
-      70% { transform: scale(2); opacity: 0.8; filter: blur(12px); }
-      100% { transform: scale(2.8); opacity: 0; filter: blur(20px); }
-    }
-    @keyframes spark-fly {
-      0% { opacity: 1; transform: translate(0, 0); }
-      100% { opacity: 0; transform: translate(var(--x), var(--y)); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulseGlow { from { text-shadow: 0 0 5px #ff6f61, 0 0 10px #ffb347; } to { text-shadow: 0 0 10px #ff6f61, 0 0 20px #ffb347; } }
+    @keyframes ignite-blast { 0% { transform: scale(0); opacity: 0; filter: blur(0); } 40% { transform: scale(1.3); opacity: 1; filter: blur(8px); } 70% { transform: scale(2); opacity: 0.8; filter: blur(12px); } 100% { transform: scale(2.8); opacity: 0; filter: blur(20px); } }
+    @keyframes spark-fly { 0% { opacity: 1; transform: translate(0, 0); } 100% { opacity: 0; transform: translate(var(--x), var(--y)); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    /* Mobile Adjustments */
+    /* Responsive */
     @media (max-width: 600px) {
-      .container { padding: 15px; }
-      h1 { margin-bottom: 12px; }
-      p { margin-bottom: 20px; }
-      #task { padding: 10px 12px; max-width: 300px; }
-      button { padding: 10px 30px; margin-top: 15px; }
-      #result { margin: 15px; padding: 10px; }
+      .hero { padding: 50px 15px; }
+      .hero h1 { font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: 15px; }
+      .hero p { font-size: clamp(1rem, 2.5vw, 1.3rem); margin-bottom: 20px; }
+      .input-group { flex-direction: column; align-items: center; gap: 10px; }
+      #task { max-width: 300px; }
+      button { padding: 10px 30px; }
+      .testimonials { padding: 40px 15px; }
+      .testimonial { padding: 20px; }
+      footer { padding: 30px 15px; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <!-- Hero Section -->
+  <section class="hero">
     <h1>Taskplosion</h1>
-    <p>Overwhelmed? Drop a task, simplify it for just $1, and crush it with clear steps!</p>
-    <input type="text" id="task" placeholder="E.g., 'Plan a team meeting'">
-    <button onclick="explodeTask()">Simplify Now</button>
+    <p>Turn Chaos into Clarity! Simplify Any Task for Just $1 and Crush It with Actionable Steps.</p>
+    <div class="input-group">
+      <input type="text" id="task" placeholder="E.g., 'Plan a team meeting'">
+      <button onclick="explodeTask()">Simplify Now</button>
+    </div>
     <div id="result"></div>
-  </div>
+  </section>
   <div id="explosion"></div>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials">
+    <h2>Trusted by Task Warriors</h2>
+    <div class="testimonial-grid">
+      <div class="testimonial">
+        <p>"Taskplosion turned my overwhelming workload into a simple checklist. For $1, it’s pure magic!"</p>
+        <cite>- Sarah K., Freelancer</cite>
+      </div>
+      <div class="testimonial">
+        <p>"I simplified ‘organize a conference’ in seconds. Saved me hours of planning stress!"</p>
+        <cite>- Mike T., Event Planner</cite>
+      </div>
+      <div class="testimonial">
+        <p>"Clear steps that actually work. I’m getting stuff done faster than ever!"</p>
+        <cite>- Emily R., Student</cite>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>Ready to Explode Your Tasks? Join Thousands Who’ve Simplified Their Lives!</p>
+    <p>© 2025 Taskplosion. All rights reserved. <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Service</a></p>
+  </footer>
 
   <script>
     async function explodeTask() {
@@ -174,11 +251,9 @@
         return;
       }
 
-      // Trigger the explosion animation
       const explosion = document.getElementById('explosion');
       explosion.classList.add('explosion-active');
 
-      // Add sparks for visual appeal
       for (let i = 0; i < 15; i++) {
         const spark = document.createElement('div');
         spark.className = 'spark';
@@ -192,7 +267,6 @@
         setTimeout(() => spark.remove(), 1000);
       }
 
-      // Handle the request after animation
       setTimeout(async () => {
         try {
           const response = await fetch('/create-checkout', {
@@ -207,37 +281,32 @@
             return;
           }
 
-          // Handle secret test task (test-explosion-123)
           if (data.simplifiedTask) {
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = `
               <p style="font-size: 18px; margin-bottom: 15px;">Original Task: ${task}</p>
               ${data.simplifiedTask.steps.map((step, index) => `
-                <p style="font-size: 16px; margin: 10px 0;">
-                  <strong>Step ${index + 1}:</strong> ${step}
-                </p>
+                <p><strong>Step ${index + 1}:</strong> ${step}</p>
               `).join('')}
               <a href="#" onclick="resetForm(); return false;" style="color: #ffb347; text-decoration: none; font-weight: bold;">Try another task!</a>
             `;
             resultDiv.classList.add('active');
             explosion.classList.remove('explosion-active');
-            document.getElementById('task').value = ''; // Clear input
+            document.getElementById('task').value = '';
           } else {
-            window.location.href = data.url; // Redirect to Stripe
+            window.location.href = data.url;
           }
         } catch (error) {
           alert('Oops! Something broke: ' + error.message);
           explosion.classList.remove('explosion-active');
         }
-      }, 1500); // Matches animation duration
+      }, 1500);
     }
 
-    // Reset explosion animation
     document.getElementById('explosion').addEventListener('animationend', () => {
       explosion.classList.remove('explosion-active');
     });
 
-    // Reset form to initial state
     function resetForm() {
       document.getElementById('result').classList.remove('active');
       document.getElementById('task').value = '';
